@@ -202,9 +202,12 @@ static uint16_t VCP_DataRx (uint8_t* Buf, uint32_t Len)
   uint32_t i;
 	USB_RecvieCount += Len;
 	//TODO copy usb_recdata to other buff address
-	for(i=0; i<Len; i++)
-		printf("%c",Buf[i]);
-	printf("\r\n");
+	
+	APP_FOPS.pIf_DataTx(Buf, Len);
+	
+//	for(i=0; i<Len; i++)
+//		printf("%c",Buf[i]);
+//	printf("\r\n");
   return USBD_OK;
 }
 

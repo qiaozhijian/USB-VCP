@@ -116,6 +116,8 @@ int main(void)
 	delay_init(168);  //初始化延时函数
 	uart_init(115200);		//初始化串口波特率为115200
 	LED_Init();					//初始化LED  
+	printf("Start \r\n");
+//	IWDG_Init(4,500); //与分频数为64,重载值为500,溢出时间为1s	
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32fxxx_xx.s) before to branch to application main.
@@ -123,28 +125,20 @@ int main(void)
   system_stm32fxxx.c file
   */  
  
-  USBD_Init(&USB_OTG_dev,
-#ifdef USE_USB_OTG_HS 
-            USB_OTG_HS_CORE_ID,
-#else            
-            USB_OTG_FS_CORE_ID,
-#endif  
-            &USR_desc, 
-            &USBD_CDC_cb, 
-            &USR_cb);
+  USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc, &USBD_CDC_cb, &USR_cb);
   
   /* Main loop */
   while (1)
   {
 		LED0=!LED0;
-  USART_OUT(USART3,"Hello world!\r\n");
-		//if(USB_RecvieCount){
+//		IWDG_Feed();
+		//USART_OUT(USART3,"Hello world!\r\n");
+		if(USB_RecvieCount){
 		//	printf("RecDatalen:%d Start TxData\r\n",USB_RecvieCount);
-			APP_FOPS.pIf_DataTx(dat, 12);
+			//USB发送函数
 			USB_RecvieCount = 0;
-		//}
-		delay_ms(500);
-		//printf("USB_RecvieCount:%x\r\n",USB_RecvieCount);
+		}
+		delay_ms(8);
   }
 } 
 

@@ -40,6 +40,8 @@ extern u16 USART_RX_STA;         		//接收状态标记
 void uart_init(u32 bound);
 void USART_OUT(USART_TypeDef* USARTx, const char *Data, ...);
 char *itoa(int value, char *string, int radix);
+ void IWDG_Init(u8 prer,u16 rlr);
+void IWDG_Feed(void);
 #endif
 
 
