@@ -628,8 +628,10 @@ static uint8_t  usbd_cdc_DataIn (void *pdev, uint8_t epnum)
 
   if (USB_Tx_State == 1)
   {
+		/*如果*/
     if (APP_Rx_length == 0) 
     {
+			/*没有要发送的内容*/
       USB_Tx_State = 0;
     }
     else 

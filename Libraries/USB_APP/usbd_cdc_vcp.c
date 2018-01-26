@@ -205,9 +205,8 @@ static uint16_t VCP_DataRx (uint8_t* Buf, uint32_t Len)
 	
 	APP_FOPS.pIf_DataTx(Buf, Len);
 	
-//	for(i=0; i<Len; i++)
-//		printf("%c",Buf[i]);
-//	printf("\r\n");
+	for(i=0; i<Len; i++)
+		printf("%c",Buf[i]);
   return USBD_OK;
 }
 
