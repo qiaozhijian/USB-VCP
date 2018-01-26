@@ -869,10 +869,11 @@ ARM Macro Assembler    Page 14
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=..\obj\startup_stm32f40_41xxx.d -o..\obj\startup_stm32f40_41xxx
-.o -I"F:\grow\git\USB stm\USBVCP虚拟串口MDK工程模板\USER\RTE" -IC:\Keil_v5\ARM\
-PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include -IC:\Keil_v5\ARM\CMSIS\Include --p
-redefine="__UVISION_VERSION SETA 521" --predefine="STM32F40_41xxx SETA 1" --lis
-t=..\obj\startup_stm32f40_41xxx.lst ..\CORE\startup_stm32f40_41xxx.s
+.o -IE:\git代码库\USB-VCP\USER\RTE -IE:\Keil5\ARM\PACK\Keil\STM32F4xx_DFP\2.11.
+0\Drivers\CMSIS\Device\ST\STM32F4xx\Include -IE:\Keil5\ARM\CMSIS\Include -IE:\K
+eil5\ARM\PACK\Keil\STM32F4xx_DFP\2.11.0\Device\Include --predefine="__UVISION_V
+ERSION SETA 521" --predefine="STM32F407xx SETA 1" --list=..\obj\startup_stm32f4
+0_41xxx.lst ..\CORE\startup_stm32f40_41xxx.s
 
 
 

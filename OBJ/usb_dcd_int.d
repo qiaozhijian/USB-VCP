@@ -5,7 +5,7 @@
 ..\obj\usb_dcd_int.o: ..\Libraries\USB_APP\usb_conf.h
 ..\obj\usb_dcd_int.o: ..\USER\stm32f4xx.h
 ..\obj\usb_dcd_int.o: ..\CORE\core_cm4.h
-..\obj\usb_dcd_int.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\usb_dcd_int.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\usb_dcd_int.o: ..\CORE\core_cmInstr.h
 ..\obj\usb_dcd_int.o: ..\CORE\core_cmFunc.h
 ..\obj\usb_dcd_int.o: ..\CORE\core_cm4_simd.h

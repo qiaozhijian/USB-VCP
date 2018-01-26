@@ -4,7 +4,7 @@
 ..\obj\usb_bsp.o: ..\Libraries\USB_APP\usb_conf.h
 ..\obj\usb_bsp.o: ..\USER\stm32f4xx.h
 ..\obj\usb_bsp.o: ..\CORE\core_cm4.h
-..\obj\usb_bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\usb_bsp.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\usb_bsp.o: ..\CORE\core_cmInstr.h
 ..\obj\usb_bsp.o: ..\CORE\core_cmFunc.h
 ..\obj\usb_bsp.o: ..\CORE\core_cm4_simd.h
@@ -42,6 +42,6 @@
 ..\obj\usb_bsp.o: ..\SYSTEM\sys\sys.h
 ..\obj\usb_bsp.o: ..\SYSTEM\delay\delay.h
 ..\obj\usb_bsp.o: ..\SYSTEM\usart\usart.h
-..\obj\usb_bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-..\obj\usb_bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-..\obj\usb_bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\usb_bsp.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\usb_bsp.o: E:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\usb_bsp.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdarg.h

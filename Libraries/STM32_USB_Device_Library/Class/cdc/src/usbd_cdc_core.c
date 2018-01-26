@@ -614,6 +614,9 @@ static uint8_t  usbd_cdc_EP0_RxReady (void  *pdev)
   return USBD_OK;
 }
 
+
+u8 TxBufTemp[64];
+
 /**
   * @brief  usbd_audio_DataIn
   *         Data sent on non-control IN endpoint
@@ -623,7 +626,7 @@ static uint8_t  usbd_cdc_EP0_RxReady (void  *pdev)
   */
 static uint8_t  usbd_cdc_DataIn (void *pdev, uint8_t epnum)
 {
-  uint16_t USB_Tx_ptr;
+//  uint16_t USB_Tx_ptr;
   uint16_t USB_Tx_length;
 
   if (USB_Tx_State == 1)
