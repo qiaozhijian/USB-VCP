@@ -615,7 +615,8 @@ static uint8_t  usbd_cdc_EP0_RxReady (void  *pdev)
 }
 
 
-u8 TxBufTemp[64];
+u8 TxBufTemp[64];//该Usb段子一次能读多少
+u8 flag = 0;
 
 /**
   * @brief  usbd_audio_DataIn
@@ -628,7 +629,8 @@ static uint8_t  usbd_cdc_DataIn (void *pdev, uint8_t epnum)
 {
 //  uint16_t USB_Tx_ptr;
   uint16_t USB_Tx_length;
-
+	u32 Len;
+	u32 i;
   if (USB_Tx_State == 1)
   {
 		/*如果*/
@@ -639,26 +641,89 @@ static uint8_t  usbd_cdc_DataIn (void *pdev, uint8_t epnum)
     }
     else 
     {
+			if(APP_Rx_ptr_out>APP_Rx_ptr_in){//写入的比读取的早完成了一个回环roll back
+				APP_Rx_length=APP_RX_DATA_SIZE-APP_Rx_ptr_out;
+				APP_Rx_length+=APP_Rx_ptr_in;
+				
+				flag=1;//标志位置为1 说明出现了数据回环这种现象
+			
+			}
+			else{
+				APP_Rx_length =APP_Rx_ptr_in -APP_Rx_ptr_out;
+				flag=0;//说明数据储存方式还是正常的
+		
+			}
+			//倘若主机需要读取的数据比一次传输的多 需要反复传输多次
       if (APP_Rx_length > CDC_DATA_IN_PACKET_SIZE){
-        USB_Tx_ptr = APP_Rx_ptr_out;
-        USB_Tx_length = CDC_DATA_IN_PACKET_SIZE;
-        
-        APP_Rx_ptr_out += CDC_DATA_IN_PACKET_SIZE;
-        APP_Rx_length -= CDC_DATA_IN_PACKET_SIZE;    
-      }
-      else 
-      {
-        USB_Tx_ptr = APP_Rx_ptr_out;
-        USB_Tx_length = APP_Rx_length;
-        
-        APP_Rx_ptr_out += APP_Rx_length;
-        APP_Rx_length = 0;
-      }
+				if(flag){
+					Len = APP_Rx_ptr_out+CDC_DATA_IN_PACKET_SIZE;
+					//单片机内的缓冲区的数组最大存储量  #define APP_RX_DATA_SIZE 2048
+					if(Len>APP_RX_DATA_SIZE){//说明即使是一次传输已经到了缓冲区数组末尾了，需要拆开发送
+						for(int i=0;i<APP_RX_DATA_SIZE-APP_Rx_ptr_out;i++){
+							TxBufTemp[i]=APP_Rx_Buffer[APP_Rx_ptr_out+i];
+						}
+						for(int i=0;i<(CDC_DATA_IN_PACKET_SIZE+APP_Rx_ptr_out-APP_RX_DATA_SIZE);i++){
+							TxBufTemp[APP_RX_DATA_SIZE-APP_Rx_ptr_out+i]=APP_Rx_Buffer[i];
+						}
+						USB_Tx_length = CDC_DATA_IN_PACKET_SIZE;//一次发满端子的最大容量
+						APP_Rx_ptr_out= CDC_DATA_IN_PACKET_SIZE + APP_Rx_ptr_out - APP_RX_DATA_SIZE;
+						APP_Rx_length-=CDC_DATA_IN_PACKET_SIZE;//输出了端子能承受的最大字节
+					}
+					else{//这时候还么达到缓存区数据的末尾，能够直接操作不用拆包了
+						for(int i=0;i<CDC_DATA_IN_PACKET_SIZE;i++){
+							TxBufTemp[i]=APP_Rx_Buffer[APP_Rx_ptr_out+i];
+						}
+						USB_Tx_length = CDC_DATA_IN_PACKET_SIZE;//一次发满端子的最大容量
+						APP_Rx_ptr_out= CDC_DATA_IN_PACKET_SIZE + APP_Rx_ptr_out;
+						APP_Rx_length-=CDC_DATA_IN_PACKET_SIZE;//输出了端子能承受的最大字节
+					}
+				}
+				else{
+					for(int i=0;i<CDC_DATA_IN_PACKET_SIZE;i++){
+						TxBufTemp[i]=APP_Rx_Buffer[APP_Rx_ptr_out+i];
+					}
+					USB_Tx_length = CDC_DATA_IN_PACKET_SIZE;//一次发满端子的最大容量
+					APP_Rx_ptr_out= CDC_DATA_IN_PACKET_SIZE + APP_Rx_ptr_out;
+					APP_Rx_length-=CDC_DATA_IN_PACKET_SIZE;//输出了端子能承受的最大字节
+				}
+     }
+     else{//倘若主机只需要传输一次数据
+			 if(flag){
+					Len = APP_Rx_ptr_out+APP_Rx_length;
+					 if(Len>APP_RX_DATA_SIZE){//一次传输到了数组缓存区的末端，重新从头开始储存了
+						 for(int i=0;i<(APP_RX_DATA_SIZE-APP_Rx_ptr_out);i++){
+							 TxBufTemp[i]=APP_Rx_Buffer[APP_Rx_ptr_out+i];
+						 }
+						 for(int i=0;i<(APP_Rx_ptr_out+APP_Rx_length-APP_RX_DATA_SIZE);i++){
+							 TxBufTemp[APP_RX_DATA_SIZE-APP_Rx_ptr_out+i]=APP_Rx_Buffer[i];
+						 }
+						 USB_Tx_length = APP_Rx_length;
+						 APP_Rx_ptr_out = APP_Rx_ptr_out+APP_Rx_length-APP_RX_DATA_SIZE;
+						 APP_Rx_length=0;//只需要发送一次数据然后就不需要了
+					 }
+					 else{//一次传输就够了，缓存区还没读到头,就是刚好是64个字节到末尾.APP_Rx_ptr_in到缓存区数组开头
+						 for(int i =0;i<APP_Rx_length;i++){
+							 TxBufTemp[i]=APP_Rx_Buffer[APP_Rx_ptr_out+i];
+						 }
+						 USB_Tx_length = APP_Rx_length;
+						 APP_Rx_ptr_out= APP_Rx_ptr_out+APP_Rx_length;
+						 APP_Rx_length=0;
+					 }
+			 }
+			 else{//没有出现数据回环
+				 for(int i=0;i< APP_Rx_length;i++){
+					 TxBufTemp[i]=APP_Rx_Buffer[APP_Rx_ptr_out+i];
+				 }
+				 USB_Tx_length = APP_Rx_length;
+				 APP_Rx_ptr_out= APP_Rx_ptr_out+APP_Rx_length;
+				 APP_Rx_length = 0;
+			 }
+		 }
       
       /* Prepare the available data buffer to be sent on IN endpoint */
       DCD_EP_Tx (pdev,
                  CDC_IN_EP,
-                 (uint8_t*)&APP_Rx_Buffer[USB_Tx_ptr],
+                 TxBufTemp,
                  USB_Tx_length);
     }
   }  
