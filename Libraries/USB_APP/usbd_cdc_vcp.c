@@ -160,24 +160,29 @@ static uint16_t VCP_DataTx (uint8_t* Buf, uint32_t Len)
   for (i = 0; i < Len; i++)
   {
     APP_Rx_Buffer[APP_Rx_ptr_in] = Buf[i]; 
-										
-    /* Increment the in pointer */         //USB??
+	
+    /* Increment the in pointer */      
     APP_Rx_ptr_in++;
+		
+		/* To avoid buffer overflow */
+		if(APP_Rx_ptr_in>=APP_RX_DATA_SIZE){
+			APP_Rx_ptr_in=0;
+		}
+		
   }
   
-  /* To avoid buffer overflow */
-  if(APP_Rx_ptr_in >= (APP_RX_DATA_SIZE - Len))
-  {
-    APP_Rx_ptr_in = 0;
-  }  
-  
-  APP_Rx_ptr_in++;
-  
-  /* To avoid buffer overflow */
-  if(APP_Rx_ptr_in == APP_RX_DATA_SIZE)
-  {
-    APP_Rx_ptr_in = 0;
-  }  
+//  if(APP_Rx_ptr_in >= (APP_RX_DATA_SIZE - Len))
+//  {
+//    APP_Rx_ptr_in = 0;
+//  }  
+//  
+//  APP_Rx_ptr_in++;
+//  
+//  /* To avoid buffer overflow */
+//  if(APP_Rx_ptr_in == APP_RX_DATA_SIZE)
+//  {
+//    APP_Rx_ptr_in = 0;
+//  }  
   
   return USBD_OK;
 }
